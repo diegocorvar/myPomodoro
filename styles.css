@@ -1,0 +1,118 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 90vh;
+    background-color: #191919;
+}
+
+h1 {
+    color: white;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+#main-container {
+    margin: 10px auto;
+    height: 100%;
+    width: 80%;
+}
+
+header {
+    padding: 5px 0;
+}
+
+header h1 {
+    font-size: 1rem;
+    text-align: center;
+}
+
+#progress-bar {
+    width: 100%;
+    margin-bottom: 50px;
+    border-bottom: 1px solid white;
+}
+
+#greeting-text {
+    text-align: center;
+    color: white;
+    user-select: none;
+}
+
+#clock-section {
+    width: 80%;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color: #333333;
+    padding-bottom: 1px;
+}
+
+#options-container {
+    display: flex;
+    padding: 10px;
+    justify-content: space-around;
+}
+
+.option-btn {
+    font-size: 1rem;
+    background-color: #333333;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.option-btn:hover {
+    background-color: rgb(189, 189, 189);
+    color: #191919;
+    transform: scale(1.1);
+}
+
+#main-time {
+    text-align: center;
+    font-size: 6rem;
+    font-weight: bold;
+    margin: 10px 0;
+    user-select: none;
+    color: rgb(0, 0, 0);
+}
+
+#time-ctrl-btn {
+    display: block;
+    margin: 30px auto;
+    width: 150px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+#time-ctrl-btn:hover {
+    background-color: rgb(189, 189, 189);
+    transform: scale(1.10);
+    color: rgb(0, 0, 0);
+}
+
+#pomodoro-count {
+    width: 80%;
+    margin: 10px auto 5px;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #333333;
+    color: white;
+    padding: 5px 0;
+}
+
+#pomodoro-count + p {
+    text-align: center;
+    color: rgb(76, 167, 136);
+    margin-top: 0;
+}
+
