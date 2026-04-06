@@ -11,6 +11,14 @@ h1 {
     user-select: none;
 }
 
+.sans-serif-font {
+    font-family: sans-serif;
+}
+
+.bold {
+    font-weight: bold;
+}
+
 #main-container {
     margin: 10px auto;
     height: 100%;
@@ -34,7 +42,7 @@ header h1 {
 
 #greeting-text {
     text-align: center;
-    color: white;
+    color: rgb(76, 167, 136);
     user-select: none;
 }
 
@@ -42,7 +50,7 @@ header h1 {
     width: 80%;
     margin: 0 auto;
     border-radius: 10px;
-    background-color: #333333;
+    background-color: #af4949;
     padding-bottom: 1px;
 }
 
@@ -54,7 +62,7 @@ header h1 {
 
 .option-btn {
     font-size: 1rem;
-    background-color: #333333;
+    background-color: #af4949;
     color: white;
     border: none;
     padding: 5px;
@@ -65,8 +73,7 @@ header h1 {
 }
 
 .option-btn:hover {
-    background-color: rgb(189, 189, 189);
-    color: #191919;
+    background-color: rgb(76, 167, 136);
     transform: scale(1.1);
 }
 
@@ -76,7 +83,7 @@ header h1 {
     font-weight: bold;
     margin: 10px 0;
     user-select: none;
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
 }
 
 .time-ctrl-btn {
@@ -87,7 +94,7 @@ header h1 {
     font-size: 1.2rem;
     cursor: pointer;
     font-weight: bold;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(88, 13, 13);
     color: rgb(255, 255, 255);
     border: none;
     border-radius: 10px;
@@ -95,9 +102,8 @@ header h1 {
 }
 
 .time-ctrl-btn:hover {
-    background-color: rgb(189, 189, 189);
+    background-color: rgb(88, 13, 13);
     transform: scale(1.10);
-    color: rgb(0, 0, 0);
 }
 
 .time-ctrl-btn:active {
@@ -109,14 +115,14 @@ header h1 {
     margin: 10px auto 5px;
     border-radius: 5px;
     text-align: center;
-    background-color: #333333;
+    background-color: #643c08;
     color: white;
     padding: 5px 0;
 }
 
 #pomodoro-count + p {
     text-align: center;
-    color: rgb(76, 167, 136);
+    color: rgb(255, 255, 255);
     margin-top: 0;
 }
 
