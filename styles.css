@@ -79,7 +79,7 @@ header h1 {
     color: rgb(0, 0, 0);
 }
 
-#time-ctrl-btn {
+.time-ctrl-btn {
     display: block;
     margin: 30px auto;
     width: 150px;
@@ -94,10 +94,14 @@ header h1 {
     transition: all 0.3s;
 }
 
-#time-ctrl-btn:hover {
+.time-ctrl-btn:hover {
     background-color: rgb(189, 189, 189);
     transform: scale(1.10);
     color: rgb(0, 0, 0);
+}
+
+.time-ctrl-btn:active {
+    transform: scale(0.9);
 }
 
 #pomodoro-count {
@@ -114,5 +118,9 @@ header h1 {
     text-align: center;
     color: rgb(76, 167, 136);
     margin-top: 0;
+}
+
+#pause-time-btn {
+    display: none;
 }
 
