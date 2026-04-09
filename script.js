@@ -70,6 +70,7 @@ let grimmAudio = new Audio('./assets/audio/start-timer-grimmSound.mp3');
 // girmmAudio: An Audio object that contains sound from the popular lines "The World!" from JoJo's Bizarre Adventure
 // Used when pauses the timer
 let theWorldAudio = new Audio('./assets/audio/stop-timer-theWorld.mp3');
+let clickButtonAudio = new Audio('./assets/audio/button-click.mp3');
 
 
 // ========== ELEMENTS FROM HTML =============================================================================
@@ -82,6 +83,12 @@ const timeCtrlBtns = document.getElementsByClassName('time-ctrl-btn');
 const optionBtns = document.getElementsByClassName('option-btn');
 const minutes = document.getElementById('min');
 const seconds = document.getElementById('sec');
+const pomodoroMBtn = document.getElementById('pomodoro-mode-btn');
+const shortbreakMBtn = document.getElementById('shortBreak-mode-btn');
+const longbreakMBtn = document.getElementById('longBreak-mode-btn');
+const focustrackMBtn = document.getElementById('focus-mode-btn');
+
+// ========== TIMER VARIABLES =============================================================================
 
 // currentMin = Used to store the current minutes of the timer
 // Related to timer()
@@ -119,6 +126,32 @@ pausTiemBtn.addEventListener("click", () => handleButtonClick(
     1
 ));
 
+function handleButtonClick (audioToPlay, audioToPause, color, elementIds, scaleValue) {
+    shiftTimeCtrlBtn();
+    timer();
+
+    // Sounds
+    // audioToPause.pause();
+    // audioToPause.currentTime = 0;
+    // audioToPlay.play();
+
+    changeBackgroundColorOf(BODY, color);
+    const Ttime = color == PAUSE_COLOR ? '0.3s' : '0.1s';
+    scaleElements(elementIds, scaleValue, Ttime);
+}
+
+// ========== OPTION MODE BUTTONS ==========================================================================
+
+pomodoroMBtn.addEventListener('click', () => handleOptModBtn(POMODORO));
+shortbreakMBtn.addEventListener('click', () => handleOptModBtn(SHORT_REST));
+
+function handleOptModBtn (mode) {
+    changeModeTo(mode);
+    clickButtonAudio.pause();
+    clickButtonAudio.currentTime = 0;
+    clickButtonAudio.play();
+}
+
 
 // ========== FUNCTIONS =============================================================================
 
@@ -140,20 +173,6 @@ function showOnTimeCtrlBtn(element) {
         strtTimeBtn.textContent = playBtn[element];
     else
         pausTiemBtn.textContent = pauseBtn[element];
-}
-
-function handleButtonClick (audioToPlay, audioToPause, color, elementIds, scaleValue) {
-    shiftTimeCtrlBtn();
-    timer();
-
-    // Sounds
-    audioToPause.pause();
-    audioToPause.currentTime = 0;
-    audioToPlay.play();
-
-    changeBackgroundColorOf(BODY, color);
-    const Ttime = color == PAUSE_COLOR ? '0.3s' : '0.1s';
-    scaleElements(elementIds, scaleValue, Ttime);
 }
 
 function changeBackgroundColorOf (elementId = BODY, color, tTime = '0.1s') {
@@ -223,21 +242,37 @@ function changeModeTo(mode) {
     const sec = PRESET_TIMES[MODES[currentMode]]['seconds'];
     
     minutes.textContent = min < 10 ? '0' + min : `${min}`;
+    seconds.textContent = sec < 10 ? '0' + sec : `${sec}`;
+
     currentMin = min;
     currentSec = sec;
 
-    changeBackgroundColorOf(BODY, PAUSE_COLOR);
-    changeBackgroundColorOf(clockContainer.id, PRESET_COLORS[MODES[currentMode]]['backgroundColor']);
-    const timeBtnsArray = [...timeCtrlBtns];
-    const optionBtnsArray = [...optionBtns];
-    timeBtnsArray.forEach(btn => {
-        changeBackgroundColorOf(btn.id, PRESET_COLORS[MODES[currentMode]]['buttonsColor'], '0.3s');
-    });
-    optionBtnsArray.forEach(btn => {
-        btn.style.setProperty('background-color', PRESET_COLORS[MODES[currentMode]]);
-        
-    });
+    let elementsToChange = [
+        [BODY, PAUSE_COLOR],
+        [clockContainer, PRESET_COLORS[MODES[currentMode]]['backgroundColor']],
+    ];
+
+    elementsToChange.push(
+        ...[...timeCtrlBtns].map(btn => [
+            btn,
+            PRESET_COLORS[MODES[currentMode]]['buttonsColor'], '0.3s'
+        ])
+    );
+    elementsToChange.push(
+        ...[...optionBtns].map(btn => [
+            btn,
+            PRESET_COLORS[MODES[currentMode]]
+        ])
+    );
+
+    changeColors(elementsToChange);
+
+    function changeColors (elements) {
+        elements.forEach(([element, color]) => {
+            changeBackgroundColorOf(element.id, color);
+        });
+    }
     
     scaleElements(['options-container', 'task-section', 'greeting-text'], 1, '0.3s');
-    shiftTimeCtrlBtn();
+    if (clockPlaying) shiftTimeCtrlBtn();
 }
