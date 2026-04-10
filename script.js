@@ -35,30 +35,43 @@ const BODY = '';
 // POMODORO: Represents the first mode: 'POMODORO', whitin the MODES array
 // Releated to MODES array
 const POMODORO = 0;
-// POMODORO: Represents the second mode: 'SHORT_REST', whitin the MODES array
+// SHORT_REST: Represents the second mode: 'SHORT_REST', whitin the MODES array
 // Releated to MODES array
 const SHORT_REST = 1;
+// LONG_REST: Represents the third mode: 'LONG_REST', whitin the MODES array
+// Releated to MODES array
+const LONG_REST = 2;
+// LONG_REST: Represents the four mode: 'FOCUS_TRACK', whitin the MODES array
+// Releated to MODES array
+const FOCUS_TRACK = 3;
 
 // currentMode: Global variable used to indicates the current timer mode
 let currentMode = POMODORO;
 
 // MODES: Array that contains all timer modes
 const MODES = [
-    'POMODORO', 'SHORT_REST'
+    'POMODORO', 'SHORT_REST', 'LONG_REST', 'FOCUS_TRACK'
 ];
+
+// pomodoroCounter: Global variable used for count the number of pomodoros finished
+let pomodoroCounter = 0; 
 
 // ========== PRESETS ==========================================================================================
 
 // PRESET_COLORS: An object of objects that contains preset colors of all timer modes.
 const PRESET_COLORS = {
     POMODORO: {backgroundColor: '#af4949', buttonsColor: 'rgb(88, 13, 13)'},
-    SHORT_REST: {backgroundColor: '#0853a3', buttonsColor: '#053569'}
+    SHORT_REST: {backgroundColor: '#3f8287', buttonsColor: '#306266ff'},
+    LONG_REST: {backgroundColor: '#06407eff', buttonsColor: '#03284eff'},
+    FOCUS_TRACK: {backgroundColor: '#191919', buttonsColor: '#302f2fff'}
 };
 
 // PRESET_COLORS: An object of objects that contains pre-established times for all timer modes.
 const PRESET_TIMES = {
-    POMODORO: {minutes: 25, seconds: 0},
-    SHORT_REST: {minutes: 5, seconds: 0}
+    POMODORO: {hours: 0, minutes: 25, seconds: 0},
+    SHORT_REST: {hours: 0, minutes: 5, seconds: 0},
+    LONG_REST: {hours: 0, minutes: 15, seconds: 0},
+    FOCUS_TRACK: {hours: 0, minutes: 0, seconds: 0}
 }
 
 
@@ -75,21 +88,38 @@ let clickButtonAudio = new Audio('./assets/audio/button-click.mp3');
 
 // ========== ELEMENTS FROM HTML =============================================================================
 
+// TIMER CONTROL BUTTONS
 const strtTimeBtn = document.getElementById('start-time-btn');
 const pausTiemBtn = document.getElementById('pause-time-btn');
+const timeCtrlBtns = document.getElementsByClassName('time-ctrl-btn');
+
+// CONTAINERS
+const counterContainer = document.getElementById('counter-section');
 const mainContainer = document.getElementById('main-container');
 const clockContainer = document.getElementById('clock-section');
-const timeCtrlBtns = document.getElementsByClassName('time-ctrl-btn');
+const clock = document.getElementById('clock-container');
+
+// OPTION BUTTONS
 const optionBtns = document.getElementsByClassName('option-btn');
-const minutes = document.getElementById('min');
-const seconds = document.getElementById('sec');
 const pomodoroMBtn = document.getElementById('pomodoro-mode-btn');
 const shortbreakMBtn = document.getElementById('shortBreak-mode-btn');
 const longbreakMBtn = document.getElementById('longBreak-mode-btn');
 const focustrackMBtn = document.getElementById('focus-mode-btn');
 
+// TIME UNITS
+const hours = document.getElementById('hrs');
+const hrsDblDot = document.getElementById('hrs-doubledot');
+const minutes = document.getElementById('min');
+const seconds = document.getElementById('sec');
+
+// COUNTERS
+const pomCounterTxt = document.getElementById('pomodoro-count');
+
 // ========== TIMER VARIABLES =============================================================================
 
+// currentHr = Used to store the current hours of the timer
+// Related to timer()
+let currentHr = Number(hours.textContent);
 // currentMin = Used to store the current minutes of the timer
 // Related to timer()
 let currentMin = Number(minutes.textContent);
@@ -112,28 +142,34 @@ strtTimeBtn.addEventListener("click", () => handleButtonClick(
     grimmAudio,
     theWorldAudio,
     PRESET_COLORS[MODES[currentMode]]['backgroundColor'],
-    ['options-container', 'task-section', 'greeting-text'],
+    ['options-container', 'counter-section', 'greeting-text'],
     0
 ));
+strtTimeBtn.addEventListener("click", () => {
+    if (currentMode == FOCUS_TRACK) {
+        clock.style.transform = 'scael(150%)';
+    } 
+});
 
 pausTiemBtn.addEventListener("mouseenter", () => showOnTimeCtrlBtn(ICON));
 pausTiemBtn.addEventListener("mouseleave", () => showOnTimeCtrlBtn(TEXT));
 pausTiemBtn.addEventListener("click", () => handleButtonClick(
-    theWorldAudio,
+    clickButtonAudio,
     grimmAudio,
     PAUSE_COLOR,
-    ['options-container', 'task-section', 'greeting-text'],
+    ['options-container', 'counter-section', 'greeting-text'],
     1
 ));
 
 function handleButtonClick (audioToPlay, audioToPause, color, elementIds, scaleValue) {
     shiftTimeCtrlBtn();
-    timer();
+    if (currentMode != FOCUS_TRACK) timer();
+    else stopWatch();
 
     // Sounds
-    // audioToPause.pause();
-    // audioToPause.currentTime = 0;
-    // audioToPlay.play();
+    audioToPause.pause();
+    audioToPause.currentTime = 0;
+    audioToPlay.play();
 
     changeBackgroundColorOf(BODY, color);
     const Ttime = color == PAUSE_COLOR ? '0.3s' : '0.1s';
@@ -144,6 +180,8 @@ function handleButtonClick (audioToPlay, audioToPause, color, elementIds, scaleV
 
 pomodoroMBtn.addEventListener('click', () => handleOptModBtn(POMODORO));
 shortbreakMBtn.addEventListener('click', () => handleOptModBtn(SHORT_REST));
+longbreakMBtn.addEventListener('click', () => handleOptModBtn(LONG_REST));
+focustrackMBtn.addEventListener('click', () => handleOptModBtn(FOCUS_TRACK));
 
 function handleOptModBtn (mode) {
     changeModeTo(mode);
@@ -209,8 +247,13 @@ function timer() {
 
         if (currentSec == 60 && currentMin == 0) {
 
-            if (currentMode == POMODORO) changeModeTo(SHORT_REST);
-            else if (currentMode == SHORT_REST) changeModeTo(POMODORO);
+            if (currentMode == POMODORO) {
+                pomodoroCounter++;
+                pomCounterTxt.textContent = pomodoroCounter;
+                if (pomodoroCounter % 4 == 0) changeModeTo(LONG_REST);
+                else changeModeTo(SHORT_REST);
+            }
+            else changeModeTo(POMODORO);
             return;
         }
 
@@ -235,17 +278,71 @@ function timer() {
     }
 }
 
+function stopWatch() {
+    if (clockPlaying) {
+        count++;
+
+        if (count == 100){
+            currentSec++;
+            count = 0;
+        }
+
+        if (currentSec == 60) {
+            currentMin++;
+            currentSec = 0;
+        }
+
+        if (currentMin == 60) {
+            currentHr++;
+            currentMin = 0;
+        }
+
+        let hrsStr = String(currentHr);
+        let minStr = String(currentMin);
+        let secStr = String(currentSec);
+
+        if (currentHr < 10)
+            hrsStr = '0' + hrsStr;
+
+        if (currentMin < 10)
+            minStr = '0' + minStr;
+
+        if (currentSec < 10)
+            secStr = '0' + secStr;
+
+        hours.textContent = hrsStr;
+        minutes.textContent = minStr;
+        seconds.textContent = secStr;
+        
+        setTimeout(stopWatch, 10);
+    }
+}
+
 function changeModeTo(mode) {        
     currentMode = mode;
 
+    const hrs = PRESET_TIMES[MODES[currentMode]]['hours'];
     const min = PRESET_TIMES[MODES[currentMode]]['minutes'];
     const sec = PRESET_TIMES[MODES[currentMode]]['seconds'];
     
+    hours.textContent = hrs < 10 ? '0' + hrs : `${hrs}`;
     minutes.textContent = min < 10 ? '0' + min : `${min}`;
     seconds.textContent = sec < 10 ? '0' + sec : `${sec}`;
 
+    currentHr = hrs;
     currentMin = min;
     currentSec = sec;
+
+    if (currentMode == FOCUS_TRACK){
+        hours.classList.remove('hide');
+        hrsDblDot.classList.remove('hide');
+        counterContainer.classList.add('hide');
+    }
+    else {
+        hours.classList.add('hide');
+        hrsDblDot.classList.add('hide');
+        counterContainer.classList.remove('hide');
+    }
 
     let elementsToChange = [
         [BODY, PAUSE_COLOR],
@@ -273,6 +370,6 @@ function changeModeTo(mode) {
         });
     }
     
-    scaleElements(['options-container', 'task-section', 'greeting-text'], 1, '0.3s');
+    scaleElements(['options-container', 'counter-section', 'greeting-text'], 1, '0.3s');
     if (clockPlaying) shiftTimeCtrlBtn();
 }

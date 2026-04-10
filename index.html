@@ -22,16 +22,22 @@
                 <button id="focus-mode-btn" class="option-btn active">Focus track</button>
             </div>
             <div id="clock-container">
-                <span id="min" class="main-time">25</span>
+                <span id="hrs" class="main-time hide">00</span>
+                <span id="hrs-doubledot" class="main-time hide">:</span>
+                <span id="min" class="main-time">00</span>
                 <span class="main-time">:</span>
-                <span id="sec" class="main-time">00</span>
+                <span id="sec" class="main-time">01</span>
             </div>
             <button id="start-time-btn" class="time-ctrl-btn">Junbi dekita?</button>
             <button id="pause-time-btn" class="time-ctrl-btn">Ganbare!</button>
         </section>
-        <section id="task-section">
-            <p id="pomodoro-count">1</p>
+        <section id="counter-section">
+            <p id="pomodoro-count">0</p>
             <p class="sans-serif-font">Keep moving forward!</p>
+        </section>
+        <section id="tasks-container">
+            <h2>Tasks</h2>
+            <div class="task"></div>
         </section>
     </main>
 </body>
