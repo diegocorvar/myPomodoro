@@ -53,6 +53,10 @@ const MODES = [
     'POMODORO', 'SHORT_REST', 'LONG_REST', 'FOCUS_TRACK'
 ];
 
+const MODES_NAMES = [
+    'Pomodoro', 'Short rest', 'Long rest', 'Focus track'
+];
+
 // pomodoroCounter: Global variable used for count the number of pomodoros finished
 let pomodoroCounter = 0; 
 
@@ -74,6 +78,7 @@ const PRESET_TIMES = {
     FOCUS_TRACK: {hours: 0, minutes: 0, seconds: 0}
 }
 
+let currentProgress = 0;
 
 // ========== AUDIOS =========================================================================================
 
@@ -115,6 +120,15 @@ const seconds = document.getElementById('sec');
 // COUNTERS
 const pomCounterTxt = document.getElementById('pomodoro-count');
 
+// TEXT 
+const currentModeTitle = document.getElementById('current-mode-txt');
+
+// PROGRESS BAR 
+const progBar = document.getElementById('progress-bar');
+
+const addTaskBtn = document.getElementById('add-task-btn');
+
+
 // ========== TIMER VARIABLES =============================================================================
 
 // currentHr = Used to store the current hours of the timer
@@ -133,23 +147,29 @@ let count = 0;
 // clockPlaying: Global variable that indicates the current state of the timer: playing or on pause
 let clockPlaying = PAUSE;
 
+let totalSeconds = calcTotalSeconds();
+
+function calcTotalSeconds() {
+    return Number(hours.textContent) * 3600 + Number(minutes.textContent) * 60 + Number(seconds.textContent);
+}
+
 
 // ========== TIME CONTROL BUTTONS ==========================================================================
 
 strtTimeBtn.addEventListener("mouseenter", () => showOnTimeCtrlBtn(ICON));
 strtTimeBtn.addEventListener("mouseleave", () => showOnTimeCtrlBtn(TEXT));
-strtTimeBtn.addEventListener("click", () => handleButtonClick(
-    grimmAudio,
-    theWorldAudio,
-    PRESET_COLORS[MODES[currentMode]]['backgroundColor'],
-    ['options-container', 'counter-section', 'greeting-text'],
-    0
-));
 strtTimeBtn.addEventListener("click", () => {
-    if (currentMode == FOCUS_TRACK) {
-        clock.style.transform = 'scael(150%)';
-    } 
-});
+        handleButtonClick(
+            grimmAudio,
+            theWorldAudio,
+            PRESET_COLORS[MODES[currentMode]]['backgroundColor'],
+            ['options-container', 'counter-section', 'greeting-text', 'tasks-container'],
+            0
+        )
+        totalSeconds = calcTotalSeconds();
+        if (currentProgress != 0) currentProgress--;
+    }
+);
 
 pausTiemBtn.addEventListener("mouseenter", () => showOnTimeCtrlBtn(ICON));
 pausTiemBtn.addEventListener("mouseleave", () => showOnTimeCtrlBtn(TEXT));
@@ -157,7 +177,7 @@ pausTiemBtn.addEventListener("click", () => handleButtonClick(
     clickButtonAudio,
     grimmAudio,
     PAUSE_COLOR,
-    ['options-container', 'counter-section', 'greeting-text'],
+    ['options-container', 'counter-section', 'greeting-text', 'tasks-container'],
     1
 ));
 
@@ -191,6 +211,16 @@ function handleOptModBtn (mode) {
 }
 
 
+
+
+addTaskBtn.addEventListener('mouseenter', () => {
+    document.getElementById('add-img').style.filter = 'invert(59%) sepia(1%) saturate(2388%) hue-rotate(10deg) brightness(94%) contrast(83%)';
+});
+addTaskBtn.addEventListener('mouseleave', () => {
+    document.getElementById('add-img').style.filter = 'invert(81%) sepia(3%) saturate(0%) hue-rotate(138deg) brightness(104%) contrast(96%)';
+});
+
+
 // ========== FUNCTIONS =============================================================================
 
 // shiftTimeCtrlBtn: A function that switch the visibility of time control buttons depending on clockPlaying value
@@ -200,6 +230,7 @@ function shiftTimeCtrlBtn() {
     pausTiemBtn.style.display = clockPlaying ? HIDE : SHOW;
 
     clockPlaying = clockPlaying ? PAUSE : PLAYING;
+    progBar.style.width = clockPlaying ? `${currentProgress * 100 / totalSeconds}%` : '100%';
 }
 
 // showOnTimeCtrlBtn(): Used to toggle between icon or text when hover over a time control button
@@ -242,6 +273,7 @@ function timer() {
                 currentSec = 60;
             else
                 currentSec--;
+                increaseProgBar();
             count = 0;
         }
 
@@ -318,8 +350,12 @@ function stopWatch() {
     }
 }
 
-function changeModeTo(mode) {        
+function changeModeTo(mode) { 
+    currentProgress = 0;
+    if (currentMode != FOCUS_TRACK) totalSeconds = calcTotalSeconds();      
     currentMode = mode;
+
+    currentModeTitle.textContent = MODES_NAMES[currentMode];
 
     const hrs = PRESET_TIMES[MODES[currentMode]]['hours'];
     const min = PRESET_TIMES[MODES[currentMode]]['minutes'];
@@ -370,6 +406,11 @@ function changeModeTo(mode) {
         });
     }
     
-    scaleElements(['options-container', 'counter-section', 'greeting-text'], 1, '0.3s');
+    scaleElements(['options-container', 'counter-section', 'greeting-text', 'tasks-container'], 1, '0.3s');
     if (clockPlaying) shiftTimeCtrlBtn();
+}
+
+function increaseProgBar() {
+    currentProgress++;
+    progBar.style.width = `${currentProgress * 100 / totalSeconds}%`;
 }

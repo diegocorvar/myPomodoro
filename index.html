@@ -10,8 +10,11 @@
 <body>
     <main id="main-container">
         <header>
-            <h1>Pomodoro</h1>
-            <div id="progress-bar"></div>
+            <h1 id="current-mode-txt">Pomodoro</h1>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            
         </header>
         <p id="greeting-text" class="sans-serif-font bold">¡Hola, <span class="bold">Diego</span>!</p>
         <section id="clock-section">
@@ -26,7 +29,7 @@
                 <span id="hrs-doubledot" class="main-time hide">:</span>
                 <span id="min" class="main-time">00</span>
                 <span class="main-time">:</span>
-                <span id="sec" class="main-time">01</span>
+                <span id="sec" class="main-time">05</span>
             </div>
             <button id="start-time-btn" class="time-ctrl-btn">Junbi dekita?</button>
             <button id="pause-time-btn" class="time-ctrl-btn">Ganbare!</button>
@@ -37,8 +40,19 @@
         </section>
         <section id="tasks-container">
             <h2>Tasks</h2>
-            <div class="task"></div>
+            <div class="divider"></div>
+            <div class="divider"></div>
+            <div class="task">
+                <label class="task-lbl"><input type="checkbox" />This is a task</label>
+                <img class="settings-btn" src="./assets/images/ajuste.png">
+            </div>
+            <div class="task">
+                <label class="task-lbl"><input type="checkbox" />This is another task</label>
+                <img class="settings-btn" src="./assets/images/ajuste.png">
+            </div>
+            <button id="add-task-btn"><img id="add-img" src="./assets/images/boton-agregar.png">Add task</button>
         </section>
+        
     </main>
 </body>
 </html>
